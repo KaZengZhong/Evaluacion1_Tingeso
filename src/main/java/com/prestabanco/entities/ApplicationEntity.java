@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import java.util.Map;
 
 @Entity
 @Table(name = "applications")
@@ -32,4 +33,23 @@ public class ApplicationEntity {
     private String status;
     private BigDecimal requestedAmount;
     private Integer requestedTerm;
+
+    // Campos nuevos para simulación:
+    private BigDecimal monthlyPayment;      // Cuota mensual calculada
+    private BigDecimal totalCost;           // Costo total del crédito
+    private BigDecimal insuranceCost;       // Costo del seguro
+    private BigDecimal administrationFee;   // Comisión por administración
+
+    // Campos para documentación:
+    @ElementCollection
+    @CollectionTable(name = "application_documents")
+    private Map<String, String> documents;   // Mapa de documentos (tipo -> URL)
+
+    // Campos para evaluación:
+    private Boolean incomeRatioApproved;     // Si cumple ratio cuota/ingreso
+    private Boolean ageRequirementApproved;  // Si cumple requisito de edad
+    private Boolean savingsCapacityApproved; // Si cumple capacidad de ahorro
+    private Boolean creditHistoryApproved;   // Si cumple historial crediticio
+    private String rejectionReason;          // Razón de rechazo si aplica
+    private LocalDateTime evaluationDate;    // Fecha de evaluación
 }

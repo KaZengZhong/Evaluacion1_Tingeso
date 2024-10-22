@@ -16,6 +16,9 @@ public class ApplicationService {
     @Autowired
     private ApplicationRepository applicationRepository;
 
+    @Autowired
+    private CreditEvaluationService creditEvaluationService;
+
     public ApplicationEntity saveApplication(ApplicationEntity application) {
         return applicationRepository.save(application);
     }
@@ -49,10 +52,8 @@ public class ApplicationService {
     }
 
     public ApplicationEntity processApplication(ApplicationEntity application) {
-        // Implementar lógica de procesamiento de solicitud
-        // Esta es una implementación básica y puede necesitar ajustes
-        // Aquí podrías incluir la lógica de evaluación de crédito
-        application.setStatus("PROCESSING");
-        return applicationRepository.save(application);
+        application.setStatus("E3"); // En Evaluación
+        ApplicationEntity evaluatedApplication = creditEvaluationService.evaluateApplication(application);
+        return saveApplication(evaluatedApplication);
     }
 }

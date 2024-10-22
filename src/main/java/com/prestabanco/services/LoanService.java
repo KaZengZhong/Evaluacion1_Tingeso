@@ -40,8 +40,8 @@ public class LoanService {
     }
 
     public BigDecimal calculateMonthlyPayment(BigDecimal amount, int term, BigDecimal interestRate) {
-        // Implementar lógica de cálculo de cuota mensual
-        // Esta es una implementación simple y puede necesitar ajustes
+        // falta lógica de cálculo de cuota mensual
+        // es implementación simple y necesita ajustes
         BigDecimal monthlyRate = interestRate.divide(new BigDecimal("12"), 10, BigDecimal.ROUND_HALF_UP);
         BigDecimal factor = BigDecimal.ONE.add(monthlyRate).pow(term).subtract(BigDecimal.ONE);
         return amount.multiply(monthlyRate.multiply(factor)).divide(factor, 2, BigDecimal.ROUND_HALF_UP);
