@@ -1,33 +1,29 @@
-// src/services/loan.service.js
-import http from "../http-common";
+import api from './api';
 
-class LoanService {
-  simulate(data) {
-    return http.post("/loans/simulate", data);
+const LoanService = {
+  // Simulación de préstamo
+  simulateLoan: async (data) => {
+    return await api.post('/loans/simulate', {
+      loanType: data.loanType,
+      amount: data.amount,
+      term: data.term
+    });
+  },
+
+  // Tipos de préstamos
+  getLoanTypes: async () => {
+    return await api.get('/loans/types');
+  },
+
+  // Solicitar préstamo
+  applyForLoan: async (data) => {
+    return await api.post('/applications', data);
+  },
+
+  // Obtener tasas de interés
+  getInterestRates: async () => {
+    return await api.get('/loans/rates');
   }
+};
 
-  apply(data) {
-    return http.post("/applications", data);
-  }
-
-  getStatus(id) {
-    return http.get(`/applications/${id}`);
-  }
-}
-
-export default new LoanService();
-
-// src/services/user.service.js
-import http from "../http-common";
-
-class UserService {
-  register(data) {
-    return http.post("/users", data);
-  }
-
-  login(data) {
-    return http.post("/auth/login", data);
-  }
-}
-
-export default new UserService();
+export default LoanService;
