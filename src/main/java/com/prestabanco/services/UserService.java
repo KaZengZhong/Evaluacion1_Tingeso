@@ -14,7 +14,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserEntity saveUser(UserEntity user) {
+    public UserEntity createUser(UserEntity user) {
         return userRepository.save(user);
     }
 
@@ -26,8 +26,18 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<UserEntity> getUserByRut(String rut) {
+        return userRepository.findByRut(rut);
+    }
+
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public UserEntity updateUser(UserEntity user) {return userRepository.save(user);}
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 
     public boolean existsByEmail(String email) {
@@ -38,7 +48,5 @@ public class UserService {
         return userRepository.existsByRut(rut);
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
-    }
+
 }

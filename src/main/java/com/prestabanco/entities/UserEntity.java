@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.math.BigDecimal;
+
 
 @Entity
 @Table(name = "users")
@@ -20,18 +20,18 @@ public class UserEntity {
     @Column(unique = true, nullable = false)
     private Long id;
 
-    private String name;
+    private String rut;
+    private String firstName;
+    private String lastName;
     private String email;
     private String password;
-    private String rut;
-    private int age;
-    private double income;
+    private String phoneNumber;
+    private LocalDateTime dateOfBirth;
+    private UserRole role;
+    private LocalDateTime createdAt;
 
-    // Campos adicionales para evaluación
-    private BigDecimal savingsBalance;          // Saldo actual de ahorros del usuario
-    private LocalDateTime accountOpenDate;      // Fecha en que abrió su cuenta de ahorros
-    private BigDecimal averageMonthlyDeposit;   // Promedio de depósitos mensuales
-    private String employmentStatus;            // Estado laboral
-    private Integer employmentYears;            // Años en el empleo actual
-    private String creditHistory;               // Historial crediticio
+    public enum UserRole {
+        CLIENT,
+        EXECUTIVE
+    }
 }

@@ -18,45 +18,36 @@ public class ApplicationController {
 
     @PostMapping
     public ResponseEntity<ApplicationEntity> createApplication(@RequestBody ApplicationEntity application) {
-        ApplicationEntity newApplication = applicationService.saveApplication(application);
-        return new ResponseEntity<>(newApplication, HttpStatus.CREATED);
+        return ResponseEntity.ok(applicationService.createApplication(application));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationEntity> getApplicationById(@PathVariable Long id) {
         return applicationService.getApplicationById(id)
                 .map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping
-    public ResponseEntity<List<ApplicationEntity>> getAllApplications() {
-        List<ApplicationEntity> applications = applicationService.getAllApplications();
-        return new ResponseEntity<>(applications, HttpStatus.OK);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ApplicationEntity>> getApplicationsByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(applicationService.getApplicationsByUserId(userId));
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<ApplicationEntity>> getApplicationsByStatus(@PathVariable String status) {
-        List<ApplicationEntity> applications = applicationService.getApplicationsByStatus(status);
-        return new ResponseEntity<>(applications, HttpStatus.OK);
+    public ResponseEntity<List<ApplicationEntity>> getApplicationsByStatus(@PathVariable ApplicationEntity.ApplicationStatus status) {
+        return ResponseEntity.ok(applicationService.getApplicationsByStatus(status));
     }
 
-    @PostMapping("/{id}/process")
-    public ResponseEntity<ApplicationEntity> processApplication(@PathVariable Long id) {
-        return applicationService.getApplicationById(id)
-                .map(application -> {
-                    ApplicationEntity processedApplication = applicationService.processApplication(application);
-                    return new ResponseEntity<>(processedApplication, HttpStatus.OK);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @PutMapping("/{id}")
+    public ResponseEntity<ApplicationEntity> updateApplication(@PathVariable Long id, @RequestBody ApplicationEntity application) {
+        application.setId(id);
+        return ResponseEntity.ok(applicationService.updateApplication(application));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteApplication(@PathVariable Long id) {
-        if (!applicationService.getApplicationById(id).isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         applicationService.deleteApplication(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok().build();
     }
 }
+

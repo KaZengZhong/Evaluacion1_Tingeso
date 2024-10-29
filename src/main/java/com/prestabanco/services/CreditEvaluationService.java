@@ -1,4 +1,4 @@
-package com.prestabanco.services;
+/*package com.prestabanco.services;
 
 import com.prestabanco.entities.ApplicationEntity;
 import org.springframework.stereotype.Service;
@@ -118,5 +118,5 @@ public class CreditEvaluationService {
             return "No cumple con la capacidad de ahorro mínima requerida";
         }
         return "Múltiples criterios no cumplidos";
-    }
-}
+ +   }
+}*/

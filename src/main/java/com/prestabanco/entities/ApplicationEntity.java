@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
-import java.util.Map;
 
 @Entity
 @Table(name = "applications")
@@ -25,31 +24,38 @@ public class ApplicationEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @ManyToOne
-    @JoinColumn(name = "loan_id")
-    private LoanEntity loan;
 
-    private LocalDateTime applicationDate;
-    private String status;
+    private PropertyType propertyType;
     private BigDecimal requestedAmount;
-    private Integer requestedTerm;
+    private Integer term;
+    private BigDecimal interestRate;
+    private ApplicationStatus status;
+    private BigDecimal monthlyIncome;
+    private Integer employmentYears;
+    private BigDecimal currentDebt;
+    private BigDecimal propertyValue;
+    private Boolean documentationComplete;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    // Campos nuevos para simulación:
-    private BigDecimal monthlyPayment;      // Cuota mensual calculada
-    private BigDecimal totalCost;           // Costo total del crédito
-    private BigDecimal insuranceCost;       // Costo del seguro
-    private BigDecimal administrationFee;   // Comisión por administración
+    public enum PropertyType {
+        FIRST_HOME,
+        SECOND_HOME,
+        COMMERCIAL,
+        REMODELING
+    }
 
-    // Campos para documentación:
-    @ElementCollection
-    @CollectionTable(name = "application_documents")
-    private Map<String, String> documents;   // Mapa de documentos (tipo -> URL)
+    public enum ApplicationStatus {
+        IN_REVIEW,
+        PENDING_DOCUMENTS,
+        IN_EVALUATION,
+        PRE_APPROVED,
+        FINAL_APPROVAL,
+        APPROVED,
+        REJECTED,
+        CANCELLED,
+        IN_DISBURSEMENT
+    }
 
-    // Campos para evaluación:
-    private Boolean incomeRatioApproved;     // Si cumple ratio cuota/ingreso
-    private Boolean ageRequirementApproved;  // Si cumple requisito de edad
-    private Boolean savingsCapacityApproved; // Si cumple capacidad de ahorro
-    private Boolean creditHistoryApproved;   // Si cumple historial crediticio
-    private String rejectionReason;          // Razón de rechazo si aplica
-    private LocalDateTime evaluationDate;    // Fecha de evaluación
+
 }

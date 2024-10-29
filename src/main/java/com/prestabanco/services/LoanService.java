@@ -2,6 +2,7 @@ package com.prestabanco.services;
 
 import com.prestabanco.entities.LoanEntity;
 import com.prestabanco.repositories.LoanRepository;
+import com.prestabanco.entities.ApplicationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ public class LoanService {
     @Autowired
     private LoanRepository loanRepository;
 
-    public LoanEntity saveLoan(LoanEntity loan) {
+    public LoanEntity createLoan(LoanEntity loan) {
         return loanRepository.save(loan);
     }
 
@@ -23,27 +24,23 @@ public class LoanService {
         return loanRepository.findById(id);
     }
 
-    public List<LoanEntity> getAllLoans() {
-        return loanRepository.findAll();
+    public List<LoanEntity> getLoansByUserId(Long userId) {
+        return loanRepository.findByUserId(userId);
     }
 
-    public List<LoanEntity> getLoansByType(String type) {
-        return loanRepository.findByType(type);
+    public List<LoanEntity> getLoansByUserAndPropertyType(Long userId, ApplicationEntity.PropertyType propertyType) {
+        return loanRepository.findByUserIdAndPropertyType(userId, propertyType);
     }
 
-    public List<LoanEntity> getLoansByMaxAmount(BigDecimal maxAmount) {
-        return loanRepository.findByAmountLessThanEqual(maxAmount);
+    public LoanEntity updateLoan(LoanEntity loan) {
+        return loanRepository.save(loan);
     }
 
     public void deleteLoan(Long id) {
         loanRepository.deleteById(id);
     }
 
-    public BigDecimal calculateMonthlyPayment(BigDecimal amount, int term, BigDecimal interestRate) {
-        // falta lógica de cálculo de cuota mensual
-        // es implementación simple y necesita ajustes
-        BigDecimal monthlyRate = interestRate.divide(new BigDecimal("12"), 10, BigDecimal.ROUND_HALF_UP);
-        BigDecimal factor = BigDecimal.ONE.add(monthlyRate).pow(term).subtract(BigDecimal.ONE);
-        return amount.multiply(monthlyRate.multiply(factor)).divide(factor, 2, BigDecimal.ROUND_HALF_UP);
+    public List<LoanEntity> getAllLoans() {
+        return loanRepository.findAll();
     }
 }

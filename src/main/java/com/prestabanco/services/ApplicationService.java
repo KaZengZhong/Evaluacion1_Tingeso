@@ -16,10 +16,8 @@ public class ApplicationService {
     @Autowired
     private ApplicationRepository applicationRepository;
 
-    @Autowired
-    private CreditEvaluationService creditEvaluationService;
 
-    public ApplicationEntity saveApplication(ApplicationEntity application) {
+    public ApplicationEntity createApplication(ApplicationEntity application) {
         return applicationRepository.save(application);
     }
 
@@ -27,33 +25,23 @@ public class ApplicationService {
         return applicationRepository.findById(id);
     }
 
-    public List<ApplicationEntity> getAllApplications() {
-        return applicationRepository.findAll();
+    public List<ApplicationEntity> getApplicationsByUserId(Long userId) {
+        return applicationRepository.findByUserId(userId);
     }
 
-    public List<ApplicationEntity> getApplicationsByUser(UserEntity user) {
-        return applicationRepository.findByUser(user);
+    public List<ApplicationEntity> getApplicationsByStatus(ApplicationEntity.ApplicationStatus statuss) {
+        return applicationRepository.findByStatus(statuss);
     }
 
-    public List<ApplicationEntity> getApplicationsByStatus(String status) {
-        return applicationRepository.findByStatus(status);
-    }
-
-    public List<ApplicationEntity> getApplicationsBetweenDates(LocalDateTime start, LocalDateTime end) {
-        return applicationRepository.findByApplicationDateBetween(start, end);
-    }
-
-    public long countApplicationsByUserAndStatus(UserEntity user, String status) {
-        return applicationRepository.countByUserAndStatus(user, status);
+    public ApplicationEntity updateApplication(ApplicationEntity application) {
+        return applicationRepository.save(application);
     }
 
     public void deleteApplication(Long id) {
         applicationRepository.deleteById(id);
     }
 
-    public ApplicationEntity processApplication(ApplicationEntity application) {
-        application.setStatus("E3"); // En Evaluación
-        ApplicationEntity evaluatedApplication = creditEvaluationService.evaluateApplication(application);
-        return saveApplication(evaluatedApplication);
+    public List<ApplicationEntity> getAllApplications() {
+        return applicationRepository.findAll();
     }
 }

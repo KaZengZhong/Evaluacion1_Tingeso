@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "loans")
@@ -19,9 +21,17 @@ public class LoanEntity {
     @Column(unique = true, nullable = false)
     private Long id;
 
-    private BigDecimal amount;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
+    private ApplicationEntity.PropertyType propertyType;
+    private BigDecimal requestedAmount;
     private Integer term;
     private BigDecimal interestRate;
-    private String type;
     private BigDecimal monthlyPayment;
+    private BigDecimal insuranceCost;
+    private BigDecimal administrativeFee;
+    private BigDecimal totalCost;
+    private LocalDateTime simulationDate;
 }
