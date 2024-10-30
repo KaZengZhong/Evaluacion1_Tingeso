@@ -1,29 +1,42 @@
-import api from './api';
+// src/services/loan.service.js
+import httpClient from "../http-common";
 
-const LoanService = {
-  // Simulación de préstamo
-  simulateLoan: async (data) => {
-    return await api.post('/loans/simulate', {
-      loanType: data.loanType,
-      amount: data.amount,
-      term: data.term
-    });
-  },
+const getAll = () => {
+    return httpClient.get('/api/loans');
+}
 
-  // Tipos de préstamos
-  getLoanTypes: async () => {
-    return await api.get('/loans/types');
-  },
+const create = data => {
+    return httpClient.post("/api/loans", data);
+}
 
-  // Solicitar préstamo
-  applyForLoan: async (data) => {
-    return await api.post('/applications', data);
-  },
+const get = id => {
+    return httpClient.get(`/api/loans/${id}`);
+}
 
-  // Obtener tasas de interés
-  getInterestRates: async () => {
-    return await api.get('/loans/rates');
-  }
+const update = (id, data) => {
+    return httpClient.put(`/api/loans/${id}`, data);
+}
+
+const remove = id => {
+    return httpClient.delete(`/api/loans/${id}`);
+}
+
+const calculateCost = data => {
+    return httpClient.post("/api/loans/calculate-cost", data);
+}
+
+const getByUserId = userId => {
+    return httpClient.get(`/api/loans/user/${userId}`);
+}
+
+const loanService = { 
+    getAll, 
+    create, 
+    get, 
+    update, 
+    remove,
+    calculateCost,
+    getByUserId 
 };
 
-export default LoanService;
+export default loanService;
