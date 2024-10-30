@@ -1,122 +1,205 @@
-/*package com.prestabanco.services;
+package com.prestabanco.services;
 
 import com.prestabanco.entities.ApplicationEntity;
+import com.prestabanco.entities.UserEntity;
+import com.prestabanco.entities.SavingsEntity;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.*;
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.HashMap;
+import com.prestabanco.entities.LoanEntity;
+import com.prestabanco.services.LoanService;
+import com.prestabanco.services.LoanCalculatorService;
+import com.prestabanco.entities.ApplicationEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 @Service
 public class CreditEvaluationService {
 
-    public ApplicationEntity evaluateApplication(ApplicationEntity application) {
-        // Evaluación de todos los criterios
-        boolean incomeRatioApproved = evaluateIncomeRatio(application);
-        boolean ageRequirementApproved = evaluateAge(application);
-        boolean creditHistoryApproved = evaluateCreditHistory(application);
-        boolean savingsCapacityApproved = evaluateSavingsCapacity(application);
-        boolean maxFinancingApproved = evaluateMaxFinancing(application);
+    private static final BigDecimal MAX_INCOME_RATIO = new BigDecimal("0.35"); // 35%
+    private static final BigDecimal MAX_DEBT_RATIO = new BigDecimal("0.50");   // 50%
+    private static final int MIN_EMPLOYMENT_YEARS = 1;
+    private static final int MAX_AGE_AT_END = 75;
+    private static final int AGE_MARGIN = 5;
 
-        // Guardar resultados de evaluación
-        application.setIncomeRatioApproved(incomeRatioApproved);
-        application.setAgeRequirementApproved(ageRequirementApproved);
-        application.setCreditHistoryApproved(creditHistoryApproved);
-        application.setSavingsCapacityApproved(savingsCapacityApproved);
-        application.setEvaluationDate(LocalDateTime.now());
+    @Getter
+    @AllArgsConstructor
+    public static class CreditEvaluationResult {
+        private final boolean approved;
+        private final List<EvaluationDetail> evaluationDetails;
+        private final String message;
 
-        // Determinar aprobación final
-        boolean approved = incomeRatioApproved &&
-                ageRequirementApproved &&
-                creditHistoryApproved &&
-                savingsCapacityApproved &&
-                maxFinancingApproved;
-
-        // Actualizar estado de la aplicación
-        if (approved) {
-            application.setStatus("E4"); // Pre-Aprobada
-        } else {
-            application.setStatus("E7"); // Rechazada
-            application.setRejectionReason(determineRejectionReason(application));
+        @Getter
+        @AllArgsConstructor
+        public static class EvaluationDetail {
+            private final String rule;
+            private final boolean passed;
+            private final String description;
         }
-
-        return application;
     }
 
-    private boolean evaluateIncomeRatio(ApplicationEntity application) {
-        // R1: La relación cuota/ingreso no debe ser mayor a 35%
-        BigDecimal monthlyPayment = application.getMonthlyPayment();
-        BigDecimal monthlyIncome = BigDecimal.valueOf(application.getUser().getIncome());
-
-        BigDecimal ratio = monthlyPayment
-                .divide(monthlyIncome, 4, BigDecimal.ROUND_HALF_UP)
-                .multiply(BigDecimal.valueOf(100));
-
-        return ratio.compareTo(BigDecimal.valueOf(35)) <= 0;
+    // R1: Relación cuota/ingreso
+    private boolean evaluateIncomeRatio(ApplicationEntity application, BigDecimal monthlyPayment) {
+        BigDecimal incomeRatio = monthlyPayment.divide(application.getMonthlyIncome(), 4, RoundingMode.HALF_UP);
+        return incomeRatio.compareTo(MAX_INCOME_RATIO) <= 0;
     }
 
-    private boolean evaluateAge(ApplicationEntity application) {
-        // R6: La edad máxima al finalizar el préstamo debe ser menor a 75 años
-        int currentAge = application.getUser().getAge();
-        int loanTermYears = application.getRequestedTerm() / 12;
-        int ageAtLoanEnd = currentAge + loanTermYears;
-
-        return ageAtLoanEnd <= 75;
-    }
-
+    // R2: Historial Crediticio
     private boolean evaluateCreditHistory(ApplicationEntity application) {
-        // R2: Evaluación del historial crediticio
-        String creditHistory = application.getUser().getCreditHistory();
-        return "GOOD".equals(creditHistory) || "REGULAR".equals(creditHistory);
+        // Simulación de consulta a DICOM
+        return true;
     }
 
-    private boolean evaluateSavingsCapacity(ApplicationEntity application) {
-        // R7: Evaluación de la capacidad de ahorro
-        BigDecimal savingsBalance = application.getUser().getSavingsBalance();
-        BigDecimal requiredBalance = application.getRequestedAmount()
-                .multiply(BigDecimal.valueOf(0.10)); // 10% del monto solicitado
-
-        return savingsBalance.compareTo(requiredBalance) >= 0;
+    // R3: Antigüedad Laboral
+    private boolean evaluateEmploymentYears(ApplicationEntity application) {
+        return application.getEmploymentYears() >= MIN_EMPLOYMENT_YEARS;
     }
 
+    // R4: Relación Deuda/Ingreso
+    private boolean evaluateDebtRatio(ApplicationEntity application, BigDecimal monthlyPayment) {
+        BigDecimal totalMonthlyDebt = application.getCurrentDebt().add(monthlyPayment);
+        BigDecimal debtRatio = totalMonthlyDebt.divide(application.getMonthlyIncome(), 4, RoundingMode.HALF_UP);
+        return debtRatio.compareTo(MAX_DEBT_RATIO) <= 0;
+    }
+
+    // R5: Monto Máximo de Financiamiento
     private boolean evaluateMaxFinancing(ApplicationEntity application) {
-        // R5: Evaluación del monto máximo de financiamiento según tipo de préstamo
-        String loanType = application.getLoan().getType();
-        BigDecimal propertyValue = application.getRequestedAmount();
-        BigDecimal maxFinancingPercentage;
+        BigDecimal maxFinancingPercentage = switch (application.getPropertyType()) {
+            case FIRST_HOME -> new BigDecimal("0.80");    // 80%
+            case SECOND_HOME -> new BigDecimal("0.70");   // 70%
+            case COMMERCIAL -> new BigDecimal("0.60");    // 60%
+            case REMODELING -> new BigDecimal("0.50");    // 50%
+        };
 
-        switch (loanType) {
-            case "FIRST_HOME":
-                maxFinancingPercentage = BigDecimal.valueOf(0.80); // 80%
-                break;
-            case "SECOND_HOME":
-                maxFinancingPercentage = BigDecimal.valueOf(0.70); // 70%
-                break;
-            case "COMMERCIAL":
-                maxFinancingPercentage = BigDecimal.valueOf(0.60); // 60%
-                break;
-            case "RENOVATION":
-                maxFinancingPercentage = BigDecimal.valueOf(0.50); // 50%
-                break;
-            default:
-                return false;
-        }
-
-        BigDecimal maxAmount = propertyValue.multiply(maxFinancingPercentage);
+        BigDecimal maxAmount = application.getPropertyValue().multiply(maxFinancingPercentage);
         return application.getRequestedAmount().compareTo(maxAmount) <= 0;
     }
 
-    private String determineRejectionReason(ApplicationEntity application) {
-        if (!application.getIncomeRatioApproved()) {
-            return "La relación cuota/ingreso excede el 35% permitido";
-        }
-        if (!application.getAgeRequirementApproved()) {
-            return "La edad al término del crédito excede el límite de 75 años";
-        }
-        if (!application.getCreditHistoryApproved()) {
-            return "El historial crediticio no cumple con los requisitos";
-        }
-        if (!application.getSavingsCapacityApproved()) {
-            return "No cumple con la capacidad de ahorro mínima requerida";
-        }
-        return "Múltiples criterios no cumplidos";
- +   }
-}*/
+    // R6: Edad del Solicitante (versión modificada para trabajar con edad directa)
+    private boolean evaluateAge(ApplicationEntity application, UserEntity user) {
+        int ageAtEnd = user.getAge() + application.getTerm();
+        return ageAtEnd <= (MAX_AGE_AT_END - AGE_MARGIN);
+    }
+
+    // R7: Evaluación de Capacidad de Ahorro
+    private boolean evaluateSavingsCapacity(SavingsEntity savings, ApplicationEntity application) {
+        if (savings == null) return false;
+
+        int criteriasMet = 0;
+
+        // R71: Saldo Mínimo (10% del monto solicitado)
+        BigDecimal minBalance = application.getRequestedAmount().multiply(new BigDecimal("0.10"));
+        if (savings.getCurrentBalance().compareTo(minBalance) >= 0) criteriasMet++;
+
+        // R72: Historial de Ahorro Consistente
+        if (savings.getConsecutiveMonthsWithBalance() >= 12 &&
+                savings.getSignificantWithdrawalsCount() == 0) criteriasMet++;
+
+        // R73: Depósitos Periódicos (5% del ingreso mensual)
+        BigDecimal minMonthlyDeposit = application.getMonthlyIncome().multiply(new BigDecimal("0.05"));
+        if (savings.getMonthlyDepositsAmount().compareTo(minMonthlyDeposit) >= 0) criteriasMet++;
+
+        // R74: Relación Saldo/Años
+        if (savings.getMeetsSavingsCriteria()) criteriasMet++;  // Simplificado
+
+        // R75: Retiros Recientes (no más del 30% del saldo)
+        if (savings.getLargestWithdrawalLast6Months().compareTo(
+                savings.getCurrentBalance().multiply(new BigDecimal("0.30"))) <= 0) criteriasMet++;
+
+        return criteriasMet >= 3; // Aprobado si cumple al menos 3 criterios
+    }
+
+    public CreditEvaluationResult evaluateApplication(
+            ApplicationEntity application,
+            UserEntity user,
+            SavingsEntity savings,
+            BigDecimal monthlyPayment) {
+
+        List<CreditEvaluationResult.EvaluationDetail> details = new ArrayList<>();
+        boolean allPassed = true;
+
+        // Evaluar relación cuota/ingreso
+        boolean incomeRatioPassed = evaluateIncomeRatio(application, monthlyPayment);
+        details.add(new CreditEvaluationResult.EvaluationDetail(
+                "Relación Cuota/Ingreso",
+                incomeRatioPassed,
+                "La cuota no debe superar el 35% del ingreso mensual"
+        ));
+        allPassed &= incomeRatioPassed;
+
+        // Evaluar historial crediticio
+        boolean creditHistoryPassed = evaluateCreditHistory(application);
+        details.add(new CreditEvaluationResult.EvaluationDetail(
+                "Historial Crediticio",
+                creditHistoryPassed,
+                "No debe tener deudas impagas o morosidades graves"
+        ));
+        allPassed &= creditHistoryPassed;
+
+        // Evaluar antigüedad laboral
+        boolean employmentYearsPassed = evaluateEmploymentYears(application);
+        details.add(new CreditEvaluationResult.EvaluationDetail(
+                "Antigüedad Laboral",
+                employmentYearsPassed,
+                "Debe tener al menos 1 año de antigüedad laboral"
+        ));
+        allPassed &= employmentYearsPassed;
+
+        // Evaluar relación deuda/ingreso
+        boolean debtRatioPassed = evaluateDebtRatio(application, monthlyPayment);
+        details.add(new CreditEvaluationResult.EvaluationDetail(
+                "Relación Deuda/Ingreso",
+                debtRatioPassed,
+                "El total de deudas no debe superar el 50% del ingreso"
+        ));
+        allPassed &= debtRatioPassed;
+
+        // Evaluar monto máximo de financiamiento
+        boolean maxFinancingPassed = evaluateMaxFinancing(application);
+        details.add(new CreditEvaluationResult.EvaluationDetail(
+                "Monto Máximo Financiamiento",
+                maxFinancingPassed,
+                "El monto solicitado debe estar dentro del máximo permitido según tipo de propiedad"
+        ));
+        allPassed &= maxFinancingPassed;
+
+        // Evaluar edad
+        boolean agePassed = evaluateAge(application, user);
+        details.add(new CreditEvaluationResult.EvaluationDetail(
+                "Edad",
+                agePassed,
+                "La edad al terminar el crédito no debe superar los 70 años"
+        ));
+        allPassed &= agePassed;
+
+        // Evaluar capacidad de ahorro
+        boolean savingsCapacityPassed = evaluateSavingsCapacity(savings, application);
+        details.add(new CreditEvaluationResult.EvaluationDetail(
+                "Capacidad de Ahorro",
+                savingsCapacityPassed,
+                "Debe cumplir con al menos 3 de los 5 criterios de ahorro"
+        ));
+        allPassed &= savingsCapacityPassed;
+
+        String message = allPassed ?
+                "Crédito Pre-Aprobado" :
+                "Crédito Rechazado - No cumple con todos los requisitos";
+
+        return new CreditEvaluationResult(allPassed, details, message);
+    }
+}
+

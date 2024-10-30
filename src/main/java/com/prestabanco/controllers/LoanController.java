@@ -36,32 +36,23 @@ public class LoanController {
                 loan.getTerm()
         );
 
-        // Calcular costo total
-        BigDecimal totalCost = calculatorService.calculateTotalCost(monthlyPayment, loan.getTerm());
-
         // Actualizar la entidad con los resultados
         loan.setMonthlyPayment(monthlyPayment);
-        loan.setTotalCost(totalCost);
-
         return ResponseEntity.ok(loan);
     }
 
-    @PostMapping("/validate-income")
-    public ResponseEntity<Map<String, Object>> validateLoanWithIncome(
-            @RequestParam BigDecimal loanAmount,
-            @RequestParam BigDecimal annualInterestRate,
-            @RequestParam int years,
-            @RequestParam BigDecimal monthlyIncome) {
+    @PostMapping("/calculate-cost")
+    public ResponseEntity<LoanEntity> calculateLoanCost(@RequestBody LoanEntity loan) {
+        // Calcular costo total
+        BigDecimal totalCost = calculatorService.calculateTotalCost(
+                loan.getRequestedAmount(),
+                loan.getInterestRate(),
+                loan.getTerm()
+        );
 
-        BigDecimal monthlyPayment = calculatorService.calculateMonthlyPayment(loanAmount, annualInterestRate, years);
-        boolean isAffordable = calculatorService.validateIncomeRatio(monthlyPayment, monthlyIncome);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("monthlyPayment", monthlyPayment);
-        response.put("isAffordable", isAffordable);
-        response.put("totalCost", calculatorService.calculateTotalCost(monthlyPayment, years));
-
-        return ResponseEntity.ok(response);
+        // Actualizar la entidad con los resultados
+        loan.setTotalCost(totalCost);
+        return ResponseEntity.ok(loan);
     }
 
     @GetMapping("/{id}")

@@ -10,5 +10,5 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
 
     List<DocumentEntity> findByApplicationId(Long applicationId);
 
-    List<DocumentEntity> findByApplicationIdAndStatus(Long applicationId, DocumentEntity.DocumentStatus status);
+
 }

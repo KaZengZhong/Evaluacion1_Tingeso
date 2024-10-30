@@ -8,6 +8,12 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 
 @Entity
 @Table(name = "documents")
@@ -25,10 +31,15 @@ public class DocumentEntity {
     @JoinColumn(name = "application_id")
     private ApplicationEntity application;
 
+    @Enumerated(EnumType.STRING)
     private DocumentType documentType;
+
     private String fileName;
     private String fileUrl;
     private LocalDateTime uploadDate;
+  
+
+    @Enumerated(EnumType.STRING)
     private DocumentStatus status;
 
     public enum DocumentType {

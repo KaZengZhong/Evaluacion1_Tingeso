@@ -25,9 +25,6 @@ public class DocumentService {
         return documentRepository.findByApplicationId(applicationId);
     }
 
-    public List<DocumentEntity> getDocumentsByApplicationAndStatus(Long applicationId, DocumentEntity.DocumentStatus status) {
-        return documentRepository.findByApplicationIdAndStatus(applicationId, status);
-    }
 
     public DocumentEntity updateDocument(DocumentEntity document) {
         return documentRepository.save(document);

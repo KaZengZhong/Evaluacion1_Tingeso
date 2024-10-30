@@ -29,9 +29,6 @@ public class ApplicationService {
         return applicationRepository.findByUserId(userId);
     }
 
-    public List<ApplicationEntity> getApplicationsByStatus(ApplicationEntity.ApplicationStatus statuss) {
-        return applicationRepository.findByStatus(statuss);
-    }
 
     public ApplicationEntity updateApplication(ApplicationEntity application) {
         return applicationRepository.save(application);

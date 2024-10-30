@@ -21,12 +21,11 @@ public class UserEntity {
     private Long id;
 
     private String rut;
-    private String firstName;
-    private String lastName;
+    private String name;
     private String email;
     private String password;
     private String phoneNumber;
-    private LocalDateTime dateOfBirth;
+    private Integer age;
     private UserRole role;
     private LocalDateTime createdAt;
 
