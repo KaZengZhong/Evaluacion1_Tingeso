@@ -1,33 +1,47 @@
-import api from './api';
+// src/services/application.service.js
+import httpClient from "../http-common";
 
-const ApplicationService = {
-  // Obtener solicitudes del usuario
-  getUserApplications: async () => {
-    return await api.get('/applications/user');
-  },
+const getAll = () => {
+    return httpClient.get('/api/applications');
+}
 
-  // Obtener una solicitud específica
-  getApplicationById: async (id) => {
-    return await api.get(`/applications/${id}`);
-  },
+const create = data => {
+    return httpClient.post("/api/applications", data);
+}
 
-  // Subir documentos
-  uploadDocuments: async (applicationId, documents) => {
-    const formData = new FormData();
-    for (const [key, file] of Object.entries(documents)) {
-      formData.append(key, file);
-    }
-    return await api.post(`/applications/${applicationId}/documents`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-  },
+const get = id => {
+    return httpClient.get(`/api/applications/${id}`);
+}
 
-  // Obtener estado de la solicitud
-  getApplicationStatus: async (id) => {
-    return await api.get(`/applications/${id}/status`);
-  }
+const update = (id, data) => {
+    return httpClient.put(`/api/applications/${id}`, data);
+}
+
+const remove = id => {
+    return httpClient.delete(`/api/applications/${id}`);
+}
+
+const evaluate = id => {
+    return httpClient.post(`/api/applications/${id}/evaluate`);
+}
+
+const getByUserId = userId => {
+    return httpClient.get(`/api/applications/user/${userId}`);
+}
+
+const getByStatus = status => {
+    return httpClient.get(`/api/applications/status/${status}`);
+}
+
+const applicationService = { 
+    getAll, 
+    create, 
+    get, 
+    update, 
+    remove, 
+    evaluate,
+    getByUserId,
+    getByStatus 
 };
 
-export default ApplicationService;
+export default applicationService;

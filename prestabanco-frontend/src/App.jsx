@@ -16,8 +16,8 @@ function App() {
       <div className="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/simulator" element={<LoanSimulator />} />
-          <Route path="/apply" element={<LoanApplication />} />
+          <Route path="/loan-simulator" element={<LoanSimulator />} />
+          <Route path="/loan-application" element={<LoanApplication />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/application-status" element={<ApplicationStatus />} />
