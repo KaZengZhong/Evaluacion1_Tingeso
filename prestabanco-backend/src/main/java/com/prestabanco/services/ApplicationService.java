@@ -34,6 +34,19 @@ public class ApplicationService {
         return applicationRepository.save(application);
     }
 
+    public ApplicationEntity updateStatus(Long id, String newStatus) {
+        ApplicationEntity application = applicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
+        try {
+            ApplicationEntity.ApplicationStatus status = ApplicationEntity.ApplicationStatus.valueOf(newStatus);
+            application.setStatus(status);
+            return applicationRepository.save(application);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Estado de solicitud inválido");
+        }
+    }
+
     public void deleteApplication(Long id) {
         applicationRepository.deleteById(id);
     }

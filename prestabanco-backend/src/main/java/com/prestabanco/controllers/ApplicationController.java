@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/applications")
@@ -62,6 +63,15 @@ public class ApplicationController {
                 application, user, savings, monthlyPayment));
     }
 
+    @GetMapping
+    public ResponseEntity<List<ApplicationEntity>> getAllApplications() {
+        try {
+            List<ApplicationEntity> applications = applicationService.getAllApplications();
+            return ResponseEntity.ok(applications);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationEntity> getApplicationById(@PathVariable Long id) {
@@ -81,6 +91,15 @@ public class ApplicationController {
         application.setId(id);
         return ResponseEntity.ok(applicationService.updateApplication(application));
     }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ApplicationEntity> updateStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> statusUpdate
+    ) {
+        return ResponseEntity.ok(applicationService.updateStatus(id, statusUpdate.get("status")));
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteApplication(@PathVariable Long id) {

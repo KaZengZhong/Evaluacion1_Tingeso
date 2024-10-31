@@ -33,6 +33,10 @@ const getByStatus = status => {
     return httpClient.get(`/api/applications/status/${status}`);
 }
 
+const updateStatus = (id, newStatus) => {
+    return httpClient.put(`/api/applications/${id}/status`, { status: newStatus });
+};
+
 const applicationService = { 
     getAll, 
     create, 
@@ -41,7 +45,8 @@ const applicationService = {
     remove, 
     evaluate,
     getByUserId,
-    getByStatus 
+    getByStatus,
+    updateStatus
 };
 
 export default applicationService;

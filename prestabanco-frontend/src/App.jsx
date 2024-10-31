@@ -8,6 +8,7 @@ import LoanApplication from './components/LoanApplication';
 import Login from './components/Login';
 import Register from './components/Register';
 import ApplicationStatus from './components/ApplicationStatus';
+import ApplicationManagement from './components/ApplicationManagement';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/applications" element={<ApplicationStatus />} />
+          <Route path="/managements" element={<ApplicationManagement />} />
         </Routes>
       </div>
     </Router>

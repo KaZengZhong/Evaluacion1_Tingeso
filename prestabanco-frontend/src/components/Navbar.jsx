@@ -7,7 +7,9 @@ import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const isAuthenticated = UserService.getCurrentUser();
+    const currentUser = UserService.getCurrentUser();
+    const isAuthenticated = !!currentUser; // Verifica si el usuario está autenticado
+    const isExecutive = currentUser?.role === 'EXECUTIVE'; // Verifica si el rol es EXECUTIVE
 
     const handleLogout = () => {
         UserService.logout();
@@ -49,6 +51,16 @@ const Navbar = () => {
                             >
                                 Mis Solicitudes
                             </Button>
+                            {/* Botón solo visible para ejecutivos */}
+                            {isExecutive && (
+                                <Button 
+                                    color="inherit"
+                                    component={Link} 
+                                    to="/managements" // Cambia esto a tu ruta correspondiente
+                                >
+                                    Gestión
+                                </Button>
+                            )}
                         </>
                     )}
                 </Box>

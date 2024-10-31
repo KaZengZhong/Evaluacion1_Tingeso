@@ -1,0 +1,2 @@
+INSERT INTO users (rut, first_name, last_name, email, password, phone_number, age, role)
+VALUES ('12345678-9', 'Juan', 'Pérez', 'juan.perez@example.com', 'password123', '123456789', 30, 1);
