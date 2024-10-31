@@ -14,6 +14,7 @@ import {
     Button
 } from '@mui/material';
 import ApplicationService from '../services/application.service';
+import LoanService from '../services/loan.service';
 
 function CreditEvaluation() {
     const { id } = useParams();
@@ -21,6 +22,7 @@ function CreditEvaluation() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [evaluationResults, setEvaluationResults] = useState(null);
+    const [totalCost, setTotalCost] = useState(null);
 
     useEffect(() => {
         const fetchApplicationAndEvaluate = async () => {
@@ -33,6 +35,15 @@ function CreditEvaluation() {
                 // Realizar la evaluación
                 const evaluationResponse = await ApplicationService.evaluate(id);
                 setEvaluationResults(evaluationResponse.data);
+
+                // Calcular el costo total
+                const costResponse = await LoanService.calculateCost({
+                    amount: applicationResponse.data.requestedAmount,
+                    interestRate: applicationResponse.data.interestRate,
+                    term: applicationResponse.data.term
+                });
+                setTotalCost(costResponse.data.totalCost);
+
             } catch (err) {
                 setError('Error al cargar los datos');
                 console.error('Error:', err);
@@ -164,6 +175,22 @@ function CreditEvaluation() {
                         </Card>
                     </Grid>
                     
+                    {/* Costo Total */}
+                    <Grid item xs={12}>
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h6" gutterBottom>
+                                    Costo Total
+                                </Typography>
+                                <Paper sx={{ p: 2, bgcolor: 'info.light', textAlign: 'center' }}>
+                                    <Typography variant="h5">
+                                        ${totalCost?.toLocaleString()}
+                                    </Typography>
+                                </Paper>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
                     {/* Resultados de la evaluación */}
                     {evaluationResults && (
                     <Grid item xs={12}>
