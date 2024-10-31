@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class UserService {
@@ -14,9 +16,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+
+
     public UserEntity createUser(UserEntity user) {
         return userRepository.save(user);
     }
+
 
     public Optional<UserEntity> getUserById(Long id) {
         return userRepository.findById(id);
@@ -48,5 +53,15 @@ public class UserService {
         return userRepository.existsByRut(rut);
     }
 
+    public UserEntity validateLogin(String email, String password) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!user.getPassword().equals(password)) {
+            throw new RuntimeException("Contraseña incorrecta");
+        }
+
+        return user;
+    }
 
 }
