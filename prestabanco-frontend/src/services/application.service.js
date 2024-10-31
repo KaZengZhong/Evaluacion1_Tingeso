@@ -21,9 +21,9 @@ const remove = id => {
     return httpClient.delete(`/api/applications/${id}`);
 }
 
-const evaluate = id => {
-    return httpClient.post(`/api/applications/${id}/evaluate`);
-}
+const evaluate = (applicationId) => {
+    return httpClient.post(`/api/applications/${applicationId}/evaluate`);
+};
 
 const getByUserId = userId => {
     return httpClient.get(`/api/applications/user/${userId}`);
@@ -37,6 +37,7 @@ const updateStatus = (id, newStatus) => {
     return httpClient.put(`/api/applications/${id}/status`, { status: newStatus });
 };
 
+
 const applicationService = { 
     getAll, 
     create, 
@@ -46,7 +47,8 @@ const applicationService = {
     evaluate,
     getByUserId,
     getByStatus,
-    updateStatus
+    updateStatus,
+ 
 };
 
 export default applicationService;

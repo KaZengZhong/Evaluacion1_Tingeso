@@ -9,6 +9,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import ApplicationStatus from './components/ApplicationStatus';
 import ApplicationManagement from './components/ApplicationManagement';
+import CreditEvaluation from './components/CreditEvaluation';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/applications" element={<ApplicationStatus />} />
           <Route path="/managements" element={<ApplicationManagement />} />
+          <Route path="/credit/:id" element={<CreditEvaluation />} />
         </Routes>
       </div>
     </Router>

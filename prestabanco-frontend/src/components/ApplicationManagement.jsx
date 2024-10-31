@@ -1,4 +1,3 @@
-// src/components/admin/ApplicationManagement.jsx
 import React, { useEffect, useState } from 'react';
 import {
     Box,
@@ -21,14 +20,17 @@ import {
 } from '@mui/material';
 import ApplicationService from '../services/application.service';
 import UserService from '../services/user.service';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 
 function ApplicationManagement() {
+    const navigate = useNavigate(); // Inicializar useNavigate
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null); // Nuevo estado para mensajes de éxito
     const [selectedApplication, setSelectedApplication] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
-
+    
     const applicationStatuses = [
         { value: 'IN_REVIEW', label: 'En Revisión Inicial' },
         { value: 'PENDING_DOCUMENTS', label: 'Pendiente de Documentación' },
@@ -68,6 +70,11 @@ function ApplicationManagement() {
         }
     };
 
+    const handleEvaluateCredit = (applicationId) => {
+        // Navegar a la pestaña de /credit
+        navigate(`/credit/${applicationId}`); // Aquí puedes pasar el ID si necesitas hacerlo en la nueva ruta
+    };
+
     const getStatusInfo = (status) => {
         const statusInfo = {
             IN_REVIEW: { label: 'En Revisión Inicial', color: 'primary' },
@@ -103,10 +110,15 @@ function ApplicationManagement() {
 
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pt: 10, pb: 4 }}>
-            <Container maxWidth="lg" sx={{ ml: { xs: 4, sm: 8, md: 25 }, mr: 'auto' }}>
+            <Container maxWidth="lg" sx={{ ml: { xs: 4, sm: 8, md: 30 }, mr: 'auto' }}>
                 {error && (
                     <Alert severity="error" sx={{ mb: 3 }}>
                         {error}
+                    </Alert>
+                )}
+                {successMessage && ( // Mostrar mensaje de éxito
+                    <Alert severity="success" sx={{ mb: 3 }}>
+                        {successMessage}
                     </Alert>
                 )}
 
@@ -135,6 +147,14 @@ function ApplicationManagement() {
                                         }}
                                     >
                                         Cambiar Estado
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary" // Cambiar color si es necesario
+                                        sx={{ ml: 2 }} // Margen izquierdo para separar botones
+                                        onClick={() => handleEvaluateCredit(application.id)} // Navega a la pestaña de crédito
+                                    >
+                                        Evaluar Crédito
                                     </Button>
                                 </Grid>
                             </Grid>
@@ -220,39 +240,25 @@ function ApplicationManagement() {
                 ))}
 
                 <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                    <DialogTitle>
-                        Cambiar Estado de Solicitud #{selectedApplication?.id}
-                    </DialogTitle>
+                    <DialogTitle>Cambiar Estado</DialogTitle>
                     <DialogContent>
                         <TextField
                             select
+                            label="Estado"
                             fullWidth
-                            label="Nuevo Estado"
                             value={selectedApplication?.status || ''}
-                            onChange={(e) => setSelectedApplication({
-                                ...selectedApplication,
-                                status: e.target.value
-                            })}
-                            sx={{ mt: 2 }}
+                            onChange={(e) => handleStatusChange(selectedApplication.id, e.target.value)}
                         >
-                            {applicationStatuses.map((status) => (
-                                <MenuItem key={status.value} value={status.value}>
-                                    {status.label}
+                            {applicationStatuses.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
                                 </MenuItem>
                             ))}
                         </TextField>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => setOpenDialog(false)}>
-                            Cancelar
-                        </Button>
-                        <Button
-                            variant="contained"
-                            onClick={() => handleStatusChange(
-                                selectedApplication.id,
-                                selectedApplication.status
-                            )}
-                        >
+                        <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
+                        <Button onClick={() => handleStatusChange(selectedApplication.id, selectedApplication.status)}>
                             Guardar
                         </Button>
                     </DialogActions>

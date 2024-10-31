@@ -121,7 +121,7 @@ function ApplicationStatus() {
             pt: 10,
             pb: 4
         }}>
-            <Container maxWidth="sm" sx={{ ml: { xs: 4, sm: 8, md: 55 }, mr: 'auto' }}>
+            <Container maxWidth="lg" sx={{ ml: { xs: 4, sm: 8, md: 30 }, mr: 'auto' }}>
                 {error && (
                     <Alert severity="error" sx={{ mb: 3 }}>
                         {error}

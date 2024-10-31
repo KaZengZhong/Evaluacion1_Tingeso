@@ -23,9 +23,7 @@ public class SavingsEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserEntity user;
-
-    private String accountNumber;
+    private UserEntity user;private String accountNumber;
     private BigDecimal currentBalance;
     private LocalDateTime openingDate;
     private LocalDateTime lastTransactionDate;
@@ -37,6 +35,8 @@ public class SavingsEntity {
     private Integer significantWithdrawalsCount;
     private BigDecimal lastSixMonthsAverageBalance;
     private Boolean meetsSavingsCriteria;
+
+
 
 }
 
