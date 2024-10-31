@@ -33,6 +33,8 @@ public class ApplicationController {
 
     @PostMapping
     public ResponseEntity<ApplicationEntity> createApplication(@RequestBody ApplicationEntity application) {
+        application.setStatus(ApplicationEntity.ApplicationStatus.IN_REVIEW);
+        application.setDocumentationComplete(false);
         return ResponseEntity.ok(applicationService.createApplication(application));
     }
 

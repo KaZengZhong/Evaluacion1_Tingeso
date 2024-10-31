@@ -20,7 +20,7 @@ function App() {
           <Route path="/loan-application" element={<LoanApplication />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/application-status" element={<ApplicationStatus />} />
+          <Route path="/applications" element={<ApplicationStatus />} />
         </Routes>
       </div>
     </Router>

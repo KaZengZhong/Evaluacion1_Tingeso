@@ -30,7 +30,7 @@ const Login = () => {
             display: 'flex',
             justifyContent: 'center'
         }}>
-            <Container maxWidth="sm">
+            <Container maxWidth="sm" sx={{ ml: { xs: 4, sm: 8, md: 55 }, mr: 'auto' }}>
                 <Card sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 4 }}>
                         <Typography variant="h4" component="h1" gutterBottom textAlign="center">

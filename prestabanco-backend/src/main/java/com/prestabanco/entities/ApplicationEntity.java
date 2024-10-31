@@ -35,8 +35,7 @@ public class ApplicationEntity {
     private BigDecimal currentDebt;
     private BigDecimal propertyValue;
     private Boolean documentationComplete;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
 
     public enum PropertyType {
         FIRST_HOME,

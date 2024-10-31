@@ -28,7 +28,6 @@ public class UserEntity {
     private String phoneNumber;
     private Integer age;
     private UserRole role;
-    private LocalDateTime createdAt;
 
     public enum UserRole {
         CLIENT,

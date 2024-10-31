@@ -22,8 +22,20 @@ const remove = id => {
 }
 
 const calculateCost = data => {
-    return httpClient.post("/api/loans/calculate-cost", data);
-}
+    return httpClient.post("/api/loans/calculate-cost", {
+        requestedAmount: parseFloat(data.amount),
+        interestRate: parseFloat(data.interestRate),
+        term: parseInt(data.term)
+    });
+};
+
+const simulate = (data) => {
+    return httpClient.post("/api/loans/simulate", {
+        requestedAmount: parseFloat(data.amount),
+        interestRate: parseFloat(data.interestRate),
+        term: parseInt(data.term)
+    });
+};
 
 const getByUserId = userId => {
     return httpClient.get(`/api/loans/user/${userId}`);
@@ -36,7 +48,8 @@ const loanService = {
     update, 
     remove,
     calculateCost,
-    getByUserId 
+    getByUserId, 
+    simulate
 };
 
 export default loanService;

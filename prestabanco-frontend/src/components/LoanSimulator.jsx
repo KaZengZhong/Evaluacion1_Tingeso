@@ -48,10 +48,16 @@ const LoanSimulator = () => {
 
     const handleSimulate = async () => {
         try {
-            const response = await LoanService.calculateCost(loanData);
-            setResult(response.data);
+            console.log(loanData); // Verifica los datos antes de enviarlos
+            const simulateResponse = await LoanService.simulate(loanData);
+            const costResponse = await LoanService.calculateCost(loanData);
+            setResult({
+                monthlyPayment: simulateResponse.data.monthlyPayment,
+                interestRate: loanData.interestRate,
+                totalCost: costResponse.data.totalCost,
+            });
         } catch (err) {
-            console.error('Error simulating loan:', err);
+            console.error('Error al simular préstamo:', err);
         }
     };
 
@@ -72,7 +78,7 @@ const LoanSimulator = () => {
             display: 'flex',
             justifyContent: 'center'
         }}>
-            <Container maxWidth="sm" sx={{ ml: { xs: 4, sm: 8, md: 55 }, mr: 'auto' }}>
+            <Container maxWidth="sm" sx={{ ml: { xs: 4, sm: 8, md: 60 }, mr: 'auto' }}>
                 <Card sx={{ boxShadow: 3, mb: 4 }}>
                     <CardContent sx={{ p: 4 }}>
                         <Typography variant="h4" component="h1" gutterBottom textAlign="center">
@@ -190,10 +196,6 @@ const LoanSimulator = () => {
                                         <TableRow>
                                             <TableCell>Costo Total del Préstamo</TableCell>
                                             <TableCell align="right">${result.totalCost}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell>Total Intereses</TableCell>
-                                            <TableCell align="right">${result.totalInterest}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>
