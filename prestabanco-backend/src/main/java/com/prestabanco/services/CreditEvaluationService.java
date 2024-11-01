@@ -6,25 +6,11 @@ import com.prestabanco.entities.SavingsEntity;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.*;
-import java.math.BigDecimal;
-import java.util.Map;
-import java.util.HashMap;
-import com.prestabanco.entities.LoanEntity;
-import com.prestabanco.services.LoanService;
-import com.prestabanco.services.LoanCalculatorService;
-import com.prestabanco.entities.ApplicationEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
 
 
 @Service
