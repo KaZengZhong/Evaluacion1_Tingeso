@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+
+  postgres-db:
+    image: postgres:latest
+    restart: always
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: prestabanco
+    ports:
+      - 54320:5432
+
+  app:
+    container_name: evaluacion1_tingeso
+    build: .
+    ports:
+      - "8091:8090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/prestabanco
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - postgres-db
