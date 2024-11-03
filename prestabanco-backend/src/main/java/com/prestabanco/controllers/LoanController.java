@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/loans")
 public class LoanController {
 

@@ -1,9 +1,8 @@
 version: "3.8"
 services:
-
   postgres-db:
-    image: postgres:latest
-    restart: always
+    image: postgres:17
+    container_name: prestabanco-postgres
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     environment:
@@ -13,17 +12,37 @@ services:
     ports:
       - 54320:5432
 
-  app:
-    container_name: evaluacion1_tingeso
-    build: .
+
+
+  backend:
+    container_name: prestabanco-backend
+    image: kahaozeng/prestabanco-backend
     ports:
-      - "8091:8090"
+      - "8090:8090"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/prestabanco
+      - DB_HOST=192.168.1.132
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=admin
     deploy:
       restart_policy:
         condition: on-failure
-    depends_on:
-      - postgres-db
+
+
+
+  frontend:
+    container_name: prestabanco-frontend
+    image: kahaozeng/prestabanco-frontend
+    ports:
+      - "8070:80"
+    environment:
+      - VITE_API_URL=http://192.168.1.132:8090
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+
+
+
+
+
+
