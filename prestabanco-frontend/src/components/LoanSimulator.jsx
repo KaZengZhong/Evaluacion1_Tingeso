@@ -164,7 +164,7 @@ const LoanSimulator = () => {
                             sx={{ mt: 4, py: 1.5 }}
                             onClick={handleSimulate}
                         >
-                            Simular Préstamo
+                            Simular Préstamo (Chile)
                         </Button>
                     </CardContent>
                 </Card>
