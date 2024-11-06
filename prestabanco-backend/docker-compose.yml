@@ -24,7 +24,7 @@ services:
     image: kahaozeng/prestabanco-frontend
     container_name: prestabanco-frontend1
     environment:
-      - VITE_PRESTABANCO_BACKEND_SERVER=191.234.178.44  # Tu IP pública
+      - VITE_PRESTABANCO_BACKEND_SERVER=191.234.178.44
       - VITE_PRESTABANCO_BACKEND_PORT=8090
     networks:
       - frontend-network
@@ -36,7 +36,7 @@ services:
     image: kahaozeng/prestabanco-frontend
     container_name: prestabanco-frontend2
     environment:
-      - VITE_PRESTABANCO_BACKEND_SERVER=191.234.178.44  # Tu IP pública
+      - VITE_PRESTABANCO_BACKEND_SERVER=191.234.178.44
       - VITE_PRESTABANCO_BACKEND_PORT=8090
     networks:
       - frontend-network
@@ -48,7 +48,7 @@ services:
     image: kahaozeng/prestabanco-frontend
     container_name: prestabanco-frontend3
     environment:
-      - VITE_PRESTABANCO_BACKEND_SERVER=191.234.178.44  # Tu IP pública
+      - VITE_PRESTABANCO_BACKEND_SERVER=191.234.178.44
       - VITE_PRESTABANCO_BACKEND_PORT=8090
     networks:
       - frontend-network
