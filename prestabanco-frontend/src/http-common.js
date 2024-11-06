@@ -10,7 +10,8 @@ const API = axios.create({
     baseURL: `http://${backendServer}:${backendPort}`,
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    withCredentials: true
 });
 
 // Agregar interceptor para token
