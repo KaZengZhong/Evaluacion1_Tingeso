@@ -14,12 +14,18 @@ services:
       - 54320:5432
     networks:
       - backend-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend1:
     image: kahaozeng/prestabanco-frontend
     container_name: prestabanco-frontend1
     environment:
-      - VITE_API_URL=http://192.168.1.132:8090
+      - VITE_PRESTABANCO_BACKEND_SERVER=191.234.178.44  # Tu IP pública
+      - VITE_PRESTABANCO_BACKEND_PORT=8090
     networks:
       - frontend-network
     deploy:
@@ -30,7 +36,8 @@ services:
     image: kahaozeng/prestabanco-frontend
     container_name: prestabanco-frontend2
     environment:
-      - VITE_API_URL=http://192.168.1.132:8090
+      - VITE_PRESTABANCO_BACKEND_SERVER=191.234.178.44  # Tu IP pública
+      - VITE_PRESTABANCO_BACKEND_PORT=8090
     networks:
       - frontend-network
     deploy:
@@ -41,7 +48,8 @@ services:
     image: kahaozeng/prestabanco-frontend
     container_name: prestabanco-frontend3
     environment:
-      - VITE_API_URL=http://192.168.1.132:8090
+      - VITE_PRESTABANCO_BACKEND_SERVER=191.234.178.44  # Tu IP pública
+      - VITE_PRESTABANCO_BACKEND_PORT=8090
     networks:
       - frontend-network
     deploy:
@@ -52,9 +60,10 @@ services:
     container_name: prestabanco-backend1
     image: kahaozeng/prestabanco-backend
     environment:
-      - DB_HOST=192.168.1.132
+      - DB_HOST=postgres-db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/prestabanco
     networks:
       - backend-network
     deploy:
@@ -65,9 +74,10 @@ services:
     container_name: prestabanco-backend2
     image: kahaozeng/prestabanco-backend
     environment:
-      - DB_HOST=192.168.1.132
+      - DB_HOST=postgres-db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/prestabanco
     networks:
       - backend-network
     deploy:
@@ -78,9 +88,10 @@ services:
     container_name: prestabanco-backend3
     image: kahaozeng/prestabanco-backend
     environment:
-      - DB_HOST=192.168.1.132
+      - DB_HOST=postgres-db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/prestabanco
     networks:
       - backend-network
     deploy:
